@@ -36,6 +36,18 @@ class WebUploader extends InputWidget
     public $pluginOptions = [];
 
     /**
+     * The preview Image HTML attributes
+     * @var array
+     */
+    public $previewImgOptions = ['width' => 100, 'height' => 100];
+
+    /**
+     * The target model's attribute name for the full image url
+     * @var string
+     */
+    public $imageAttributeName = 'logo';
+
+    /**
      * The file input name
      * @var string
      */
@@ -95,6 +107,12 @@ class WebUploader extends InputWidget
     public function run()
     {
         echo Html::activeHiddenInput($this->model, $this->attribute, ['id' => null]);
+        Html::addCssClass($this->previewImgOptions, 'webuploader-preview-img');
+        if (!$this->model->isNewRecord) {
+            echo Html::img($this->model->{$this->imageAttributeName}, $this->previewImgOptions);
+        } else {
+            echo Html::img('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWP4////fwAJ+wP9CNHoHgAAAABJRU5ErkJggg==', $this->previewImgOptions);
+        }
         echo Html::tag('div', $this->buttonLabel, $this->options);
     }
 
@@ -143,16 +161,25 @@ class WebUploader extends InputWidget
         }
         $options = ArrayHelper::merge($defaults, $this->pluginOptions);
         $events = ArrayHelper::merge([
-            'uploadSuccess' => new JsExpression('function(file, response) {console.log(file);alert("uploaded");}'),
+            //'uploadSuccess' => new JsExpression('function(file, response) {;alert("success");}'),
             'uploadError' => new JsExpression('function(file, reason) {alert(reason);}'),
         ], $this->events);
         $options = Json::encode($options);
         $js[] = "var uploader = WebUploader.create($options);";
         foreach ($events as $key => $func) {
             if ($func instanceof JsExpression) {
-                $js[] = ";uploader.on('$key', $func)";
+                $js[] = "uploader.on('$key', $func);";
             }
         }
+        $attributeName = $this->name;
+        $_js = <<<JS
+function(file, response) {
+    jQuery('[name="$attributeName"]').val(response.file.alias);
+    jQuery('.webuploader-preview-img').attr('src', response.file.uploaded);
+}
+JS;
+        $defaultSuccessCallback = new JsExpression($_js);
+        $js[] = "uploader.on('uploadSuccess', $defaultSuccessCallback);";
         $this->view->registerJs(implode($js));
     }
 

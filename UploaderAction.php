@@ -50,7 +50,6 @@ class UploaderAction extends Action
         parent::init();
 
         $this->targetDirectory = Yii::getAlias($this->targetDirectory);
-        $this->baseUrl = Yii::getAlias($this->baseUrl);
 
         if (is_callable($this->fileName)) {
             $this->fileName = call_user_func($this->fileName, $this);
@@ -88,7 +87,8 @@ class UploaderAction extends Action
                 'file' => [
                     'name' => $file->name,
                     'newFileName' => $this->fileName,
-                    'uploaded' => $this->baseUrl . '/' . $this->fileName . '?_' . $_SERVER['REQUEST_TIME'],
+                    'alias' => $this->baseUrl . '/' . $this->fileName,
+                    'uploaded' => Yii::getAlias($this->baseUrl) . '/' . $this->fileName . '?_' . $_SERVER['REQUEST_TIME'],
                 ],
             ];
         }
