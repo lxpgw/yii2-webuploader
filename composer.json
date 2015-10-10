@@ -1,15 +1,20 @@
 {
-    "name": "lxpgw/yii2-webuploader",
-    "description": "The yii2 intergation with webuploader",
-    "require": {
-        "yiisoft/yii2": "^2.0",
-        "bower-asset/fex-webuploader": "^0.1.5"
-    },
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "lichunqiang",
-            "email": "light-li@hotmail.com"
-        }
-    ]
+  "name": "lxpgw/yii2-webuploader",
+  "description": "The yii2 intergation with webuploader",
+  "require": {
+    "yiisoft/yii2": "^2.0",
+    "bower-asset/fex-webuploader": "^0.1.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "lxpgw\\webuploader\\": ""
+    }
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "lichunqiang",
+      "email": "light-li@hotmail.com"
+    }
+  ]
 }
